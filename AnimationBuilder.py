@@ -164,9 +164,9 @@ class Player(FuncAnimation):
 if __name__ == '__main__':
     from matplotlib import cm
 
-    data = np.random.randn(50, 50, 10)
-    _x = np.arange(data.shape[0])
-    _y = np.arange(data.shape[1])
+    data = np.random.randn(200, 500, 10)
+    _x = np.arange(data.shape[1])
+    _y = np.arange(data.shape[0])
     _X, _Y = np.meshgrid(_x, _y)
 
     Z = np.zeros((data.shape[0], data.shape[1]), dtype=float)
