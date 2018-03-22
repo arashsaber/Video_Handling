@@ -60,7 +60,7 @@ class Player(FuncAnimation):
 
     def play(self):
         """
-        pla function
+        play function
         """
         while self.runs:
 
