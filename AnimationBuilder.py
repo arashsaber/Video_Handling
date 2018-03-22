@@ -1,6 +1,11 @@
-# !bin/python3
-#   Author: Arash Saber Tehrani
-#   -----------------------------------------------
+#!/usr/bin/python3
+"""
+The file contains a matplotlib based player object 
+Copyright (c) 2018
+Licensed under the MIT License (see LICENSE for details)
+Written by Arash Tehrani
+"""
+#   ---------------------------------------------------
 
 import scipy as sp
 import numpy as np

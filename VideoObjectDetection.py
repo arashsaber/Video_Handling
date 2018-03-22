@@ -1,6 +1,11 @@
-# Under MIT Licence 2018
-# Author: Arash Tehrani
-
+#!/usr/bin/python3
+"""
+The file contains a player for analyzing video files with object detection models
+Copyright (c) 2018
+Licensed under the MIT License (see LICENSE for details)
+Written by Arash Tehrani
+"""
+#   ---------------------------------------------------
 import numpy as np
 import sys
 import tensorflow as tf
@@ -20,7 +25,7 @@ class VideoObjectDetection(object):
     Run a predefined objectdetection implementation on a video
     """
     
-    def __init__(self, detection_graph, 
+    def __init__(self, tf_graph, 
                 fontdict={'family': 'serif',
                             'color':  'white',
                             'weight': 'normal',
@@ -32,9 +37,8 @@ class VideoObjectDetection(object):
             detection_graph: tf graph object, tensorflow model
             fontdict: dictionary, matplotlib font dictionary
         """
-
         self.video_file = video_file
-        self.graph = detection_graph
+        self.graph = tf_graph
         self.fontdict = fontdict
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111)
@@ -131,7 +135,7 @@ class VideoObjectDetection(object):
         
         self.cap.set(1, ind) 
         self.ax.clear()
-        time_str = 'Time (sec): '+'{0:.2f}'.format(ind/self.FPS)
+        time_str = 'Time (sec): {0:.2f}'.format(ind/self.FPS)
         ret, image_np = self.cap.read()         
         image_np = self._add_detected_objects(image_np)
         self.ax.imshow(cv2.resize(image_np, (1200,900))) 
@@ -193,15 +197,6 @@ if __name__ == '__main__':
     label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
     categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
     category_index = label_map_util.create_category_index(categories)
-
-
-    #   ---------------------------------
-    # Helper code
-
-    def load_image_into_numpy_array(image):
-        (im_width, im_height) = image.size
-        return np.array(image.getdata()).reshape(
-            (im_height, im_width, 3)).astype(np.uint8)
 
     #   ---------------------------------
     video_file = './data/city.mp4'
