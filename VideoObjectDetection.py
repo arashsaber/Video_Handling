@@ -14,9 +14,9 @@ import cv2
 from AnimationBuilder import Player
 
 # adding the path to tensorflow object detection module
+
 PATH_TO_OBJECT_DETECTION = '/home/arash/Desktop/models/research/object_detection'
 sys.path.append(PATH_TO_OBJECT_DETECTION)
-#sys.path.append('/home/arash/Desktop/models/research')
 
 from utils import label_map_util
 from utils import visualization_utils as vis_util
@@ -158,6 +158,7 @@ if __name__ == '__main__':
     from io import StringIO
     from PIL import Image
 
+    #   ---------------------------------
     # What model to download.
     MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
     MODEL_FILE = MODEL_NAME + '.tar.gz'
