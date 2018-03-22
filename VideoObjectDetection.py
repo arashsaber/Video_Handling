@@ -116,7 +116,7 @@ class VideoObjectDetection(object):
         """
         self.cap.set(1, ind) 
         self.ax.clear()
-        self.fig.title('Time (sec):', ind/self.FPS)
+        self.fig.title('Time (sec):', '{0:.2f}'.format(ind/self.FPS))
         ret, image_np = self.cap.read()         
         image_np = self._add_detected_objects(image_np)
         self.ax.imshow(cv2.resize(image_np, (800,600))) 
