@@ -99,7 +99,7 @@ class Player(FuncAnimation):
         self.onestep()
 
     def onestep(self):
-        if self.forward:
+        if self.forwards:
             self.ind += 1
         else:
             self.ind -= 1
