@@ -23,8 +23,17 @@ from utils import visualization_utils as vis_util
 from AnimationBuilder import Player
 #   ---------------------------------------
 class VideoObjectDetection(object):
-
-    def __init__(self, video_file, detection_graph):
+    """
+    Run a predefined objectdetection implementation on a video
+    """
+    
+    def __init__(self, video_file, detection_graph, 
+                fontdict={'family': 'serif',
+                            'color':  'white',
+                            'weight': 'normal',
+                            'size': 16,
+                            }
+                ):
         """
         Arguments:
             video_file: string, path to the video file
@@ -59,20 +68,24 @@ class VideoObjectDetection(object):
         self.w, self.h = self.cap.get(3), self.cap.get(4)
         self.FRAME_COUNT = self.cap.get(7)
         self.VIDEO_LENGTH = int(self.FRAME_COUNT/self.FPS)
+        self.fontdict = fontdict
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111)
     
         
-    def play(self, start_frame=1):
+    def play(self, start_frame=1, stop_frame=self.FRAME_COUNT):
         """
         Playing the video inside a player
         Arguments:
             start_frame: int, the starting frame
         """
+        if stop_frame > self.FRAME_COUNT:
+            stop_frame = self.FRAME_COUNT
+            
         with self.graph.as_default():
             with tf.Session(graph=self.graph) as self.sess:
                 ind = start_frame
-                animation = Player(self.fig, self._update, dis_start=1, dis_stop=50)#self.FRAME_COUNT)
+                animation = Player(self.fig, self._update, dis_start=1, dis_stop=stop_frame)#self.FRAME_COUNT)
                 plt.show()
 
     
@@ -114,13 +127,15 @@ class VideoObjectDetection(object):
         Arguments:
             ind: int, index of the frame
         """
+        
         self.cap.set(1, ind) 
         self.ax.clear()
-        self.fig.title('Time (sec):', '{0:.2f}'.format(ind/self.FPS))
+        time_str = 'Time (sec): '+'{0:.2f}'.format(ind/self.FPS)
         ret, image_np = self.cap.read()         
         image_np = self._add_detected_objects(image_np)
-        self.ax.imshow(cv2.resize(image_np, (800,600))) 
-
+        self.ax.imshow(cv2.resize(image_np, (1200,900))) 
+        self.ax.text(-2, 0.65, time_str, fontdict=self.fontdict)
+        
     
     
 #   ---------------------------------------
@@ -179,18 +194,6 @@ if __name__ == '__main__':
             (im_height, im_width, 3)).astype(np.uint8)
 
     #   ---------------------------------
-    # Detection
-
-    # For the sake of simplicity we will use only 2 images:
-    # image1.jpg
-    # image2.jpg
-    # If you want to test the code with your images, just add path to the images to the TEST_IMAGE_PATHS.
-    #PATH_TO_TEST_IMAGES_DIR = 'test_images'
-    #TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 3) ]
-
-    # Size, in inches, of the output images.
-    #IMAGE_SIZE = (12, 8)
-
     video_file = './data/city.mp4'
 
     vod = VideoObjectDetection(video_file, detection_graph)
