@@ -15,4 +15,4 @@ The package contains a player object for viewing the performance of different ob
     vod.play(video_file)
 
 **Attention:**
-The code for loading a tf model is taken from pythonprogramming.net channel. Specifically, [here](https://pythonprogramming.net/video-tensorflow-object-detection-api-tutorial/). However, this package is not about how to load a model as is aimed at building a player which simplifies analyzing the performance of the trained models on video data.
+The code for loading a tf model is taken from pythonprogramming.net channel. Specifically, [here](https://pythonprogramming.net/video-tensorflow-object-detection-api-tutorial/). However, 'VideoHandling' package is not about how to load a model as is aimed at building a player which simplifies analyzing the performance of the trained models on video data.
