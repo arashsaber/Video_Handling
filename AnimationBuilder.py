@@ -132,7 +132,7 @@ class Player(FuncAnimation):
         sax = divider.append_axes("right", size="80%", pad=0.05)
         fax = divider.append_axes("right", size="80%", pad=0.05)
         ofax = divider.append_axes("right", size="100%", pad=0.05)
-        sliderax = self.fig.add_axes((pos[0], pos[1] - 0.045, 0.5, 0.04), axisbg=self.bg_color)  # 'lemonchiffon')
+        sliderax = self.fig.add_axes((pos[0], pos[1] - 0.045, 0.5, 0.04), facecolor=self.bg_color)  # 'lemonchiffon')
 
         self.button_oneback = matplotlib.widgets.Button(playerax, color=self.button_color,
                                                         hovercolor=self.bg_color, label='$\u29CF$')  # , label=r'$\u29CF$')
@@ -169,7 +169,7 @@ class Player(FuncAnimation):
 if __name__ == '__main__':
     from matplotlib import cm
 
-    data = np.random.randn(200, 500, 10)
+    data = np.random.randn(100, 200, 10)
     _x = np.arange(data.shape[1])
     _y = np.arange(data.shape[0])
     _X, _Y = np.meshgrid(_x, _y)

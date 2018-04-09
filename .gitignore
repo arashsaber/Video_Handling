@@ -1,7 +1,13 @@
+__pycache__/*
+.idea/*
+
 test.py
+
 data/*
 !data/city.mp4
 !data/.gitkeep
 !data/mscoco_label_map.pbtxt
+
+
 ssd_mobilenet_v1_coco_11_06_2017/*
 ssd_mobilenet_v1_coco_11_06_2017.tar.gz
