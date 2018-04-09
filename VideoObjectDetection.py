@@ -219,7 +219,6 @@ if __name__ == '__main__':
     category_index = label_map_util.create_category_index(categories)
 
     #   ---------------------------------
-    #video_file = './data/city.mp4'
     video_file = './data/city.mp4'
     vod = VideoObjectDetection()
     vod.play(video_file, tf_graph=detection_graph)
