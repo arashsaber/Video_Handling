@@ -25,7 +25,7 @@ class VideoObjectDetection(object):
     Run a predefined objectdetection implementation on a video
     """
     
-    def __init__(self, tf_graph, 
+    def __init__(self, 
                 fontdict={'family': 'serif',
                             'color':  'white',
                             'weight': 'normal',
@@ -34,17 +34,16 @@ class VideoObjectDetection(object):
                 ):
         """
         Arguments:
-            detection_graph: tf graph object, tensorflow model
             fontdict: dictionary, matplotlib font dictionary
         """
-        self.video_file = video_file
-        self.graph = tf_graph
         self.fontdict = fontdict
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111)
     
         
-    def play(self, video_file, start_frame=1, stop_frame=None):
+    def play(self, video_file, start_frame=1, stop_frame=None, 
+        video_format=None, tf_graph=None, resolution=(800,600),
+        detection_flag=False):
         """
         Playing the video inside a player
 
@@ -52,6 +51,11 @@ class VideoObjectDetection(object):
             video_file: string, path to the video file
             start_frame: int, the starting frame
             stop_frame: int, the stopping frame
+            video_format: string, 4-character code of codec
+            detection_flag: bool, whether to detect objects on the video
+            tf_graph: tf graph object, tensorflow model
+            resolution: tuple of length 2, size of the frames
+            detection_flag: bool, if True, the module will run the detection on each frame
 
         VideoCapture object properties [indexed from 0 to 18]:
             0: CAP_PROP_POS_MSEC Current position of the video file in milliseconds or video capture timestamp.
@@ -75,8 +79,20 @@ class VideoObjectDetection(object):
             18: CAP_PROP_RECTIFICATION Rectification flag for stereo cameras (note: only supported by DC1394 v 2.x backend currently)
        
         """
+        self.resolution = resolution
+        self.detection_flag = detection_flag
+        self.graph = tf_graph
+        if self.graph is not None:
+            self.detection_flag = True
+        
+        self.video_file = video_file
         self.cap = cv2.VideoCapture(self.video_file)
+        if video_format is not None:
+            self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*video_format))
         self.FPS = self.cap.get(5)
+        if self.FPS == 0:
+            self.FPS = 30
+
         self.w, self.h = self.cap.get(3), self.cap.get(4)
         self.FRAME_COUNT = self.cap.get(7)
         self.VIDEO_LENGTH = int(self.FRAME_COUNT/self.FPS)
@@ -87,11 +103,14 @@ class VideoObjectDetection(object):
         if stop_frame > self.FRAME_COUNT:
             stop_frame = self.FRAME_COUNT
 
-        with self.graph.as_default():
-            with tf.Session(graph=self.graph) as self.sess:
-                ind = start_frame
-                animation = Player(self.fig, self._update, dis_start=1, dis_stop=stop_frame)#self.FRAME_COUNT)
-                plt.show()
+        if self.graph is None:
+            animation = Player(self.fig, self._update, dis_start=1, dis_stop=stop_frame)
+            plt.show()
+        else:
+            with self.graph.as_default():
+                with tf.Session(graph=self.graph) as self.sess:
+                    animation = Player(self.fig, self._update, dis_start=1, dis_stop=stop_frame)
+                    plt.show()
 
     
     def _add_detected_objects(self, image_np):
@@ -126,19 +145,20 @@ class VideoObjectDetection(object):
 
         return image_np
     
-    def _update(self, ind):
+    def _update(self, idx):
         """
         update object for the player
         Arguments:
             ind: int, index of the frame
         """
         
-        self.cap.set(1, ind) 
+        self.cap.set(1, idx) 
         self.ax.clear()
-        time_str = 'Time (sec): {0:.2f}'.format(ind/self.FPS)
-        ret, image_np = self.cap.read()         
-        image_np = self._add_detected_objects(image_np)
-        self.ax.imshow(cv2.resize(image_np, (1200,900))) 
+        time_str = 'Time (sec): {0:.2f}'.format(idx/self.FPS)
+        ret, image_np = self.cap.read()
+        if self.detection_flag:
+            image_np = self._add_detected_objects(image_np)
+        self.ax.imshow(image_np)#cv2.resize(image_np, self.resolution)) 
         self.ax.text(0., 0., time_str, fontdict=self.fontdict)
         
     
@@ -199,7 +219,7 @@ if __name__ == '__main__':
     category_index = label_map_util.create_category_index(categories)
 
     #   ---------------------------------
+    #video_file = './data/city.mp4'
     video_file = './data/city.mp4'
-
-    vod = VideoObjectDetection(detection_graph)
-    vod.play(video_file)
+    vod = VideoObjectDetection()
+    vod.play(video_file, tf_graph=detection_graph)
