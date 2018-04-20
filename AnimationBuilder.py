@@ -63,6 +63,18 @@ class Player(FuncAnimation):
                                            init_func=init_func, fargs=fargs,
                                            save_count=save_count, **kwargs)
 
+    @property
+    def ind(self):
+        return self._ind
+    
+    @ind.setter
+    def ind(self, val):
+        self._ind = val
+        self._ind -= self.start_ind
+        self._ind %= (self.dis_length)
+        self._ind += self.start_ind
+
+    
     def play(self):
         """
         play function
@@ -70,13 +82,11 @@ class Player(FuncAnimation):
         while self.runs:
 
             self.ind = self.ind + self.forwards - (not self.forwards)
-            self.ind -= self.start_ind
-            self.ind %= (self.dis_length)
-            self.ind += self.start_ind
             self._update()
 
             yield self.ind
-
+        
+        
     def start(self):
         self.runs = True
         self._update()
@@ -84,7 +94,7 @@ class Player(FuncAnimation):
 
     def stop(self, event=None):
         self.runs = False
-        #self._update()
+        self._update()
         self.event_source.stop()
 
     def forward(self, event=None):
@@ -109,9 +119,6 @@ class Player(FuncAnimation):
         else:
             self.ind -= 1
 
-        self.ind -= self.start_ind
-        self.ind %= (self.dis_length)
-        self.ind += self.start_ind
         self.func(self.ind)
 
         self._update()
@@ -120,6 +127,11 @@ class Player(FuncAnimation):
     def _update(self):
         self.slider.set_val(self.ind)
 
+    def __set_slider(self, val):
+            val = int(val)
+            self.ind = val
+            #self.func(self.ind)
+            
     def setup(self, pos):
         """
         Setting up the buttons and the slider
@@ -158,14 +170,9 @@ class Player(FuncAnimation):
         self.button_stop.on_clicked(self.stop)
         self.button_forward.on_clicked(self.forward)
         self.button_oneforward.on_clicked(self.oneforward)
+        self.slider.on_changed(self.__set_slider)
 
-        def __set_slider(val):
-            val = int(val)
-            self.ind = val
-            self.func(val)
-
-        self.slider.on_changed(__set_slider)
-
+#   -----------------------------------------------
 if __name__ == '__main__':
     from matplotlib import cm
 
@@ -183,6 +190,7 @@ if __name__ == '__main__':
 
     def update(ind):
         ind = int(ind)
+        print(ind)
         ax.clear()
         Z = data[:, :, ind]
 
